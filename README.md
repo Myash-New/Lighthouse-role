@@ -22,20 +22,43 @@ Example Playbook
 ----------------
 
 ---
-- name: Install and configure Vector  
-  hosts: your's hostname  
-  become: true  
-  roles:  
-    - { role: lighthouse, vector_version: "latest"}
+- name: NGINX | Install epel-release
+  become: true
+  ansible.builtin.yum:
+    name: epel-release
+    state: present
+- name: NGINX | Install NGINX
+  become: true
+  ansible.builtin.yum:
+    name: nginx
+    state: present
+  notify: Start-nginx
+- name: NGINX | Create general config
+  become: true
+  ansible.builtin.template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+  notify: Reload-nginx
 
-if you use req.yml
+- name: Lighthouse| install dependencies
+  become: true
+  ansible.builtin.yum:
+    name: git
+    state: present
 
-- name: Install and configure Vector  
-  hosts: your's hostname  
-  gather_facts: true  
-  roles:  
-    - lighthouse
-
+- name: Lighthouse | Copy from git
+  ansible.builtin.git:
+    repo: "{{ lighthouse_vcs }}"
+    version: master
+    dest: "{{ lighthous_local_dir }}"
+- name: Lighthouse | Create ligthouse config
+  become: true
+  ansible.builtin.template:
+    src: lighthouse_nginx.conf.j2
+    dest: /etc/nginx/conf.d/defult.conf
+    mode: "0644"
+  notify: Reload-nginx
 
 License
 -------
