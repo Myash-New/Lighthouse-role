@@ -72,5 +72,5 @@
     dest: /etc/nginx/conf.d/default.conf
     mode: "0644"
   notify: Reload-nginx
-    ags:
-        - lighthouse
+  tags:
+    - lighthouse
