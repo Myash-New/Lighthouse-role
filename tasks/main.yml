@@ -1,4 +1,11 @@
 ---
+- name: Install gnupg package
+  become: true
+  ansible.builtin.apt:
+    name: gnupg
+    state: present
+    update_cache: yes
+
 - name: Add NGINX GPG key
   become: true
   ansible.builtin.apt_key:
